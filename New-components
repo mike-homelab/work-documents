@@ -1,0 +1,47 @@
+Ticket / Request Title:
+[Infrastructure Request] Setup Azure DevOps Pipeline & Azure Resources for azure-ai-application
+
+Description / Requirements:
+Hi DevOps Team,
+
+Please review and fulfill the following infrastructure and Azure DevOps setup request for the azure-ai-application repo.
+
+1. Azure DevOps Pipeline & Service Connection
+Repository: azure-ai-application
+Pipeline Configuration File: Existing YAML pipeline at 
+
+/azure-pipelines.yml
+Agent Pool: home_lab (or update to standard enterprise self-hosted/Microsoft agent pool).
+Service Connection Required:
+Service Connection Name: azure-service-connection
+Scope: Azure Subscription ID c4b87c43-5cb1-44df-a495-b5eb8a284c4f
+Permissions: Grant pipeline access to run Terraform Init/Plan/Apply against Resource Group homelab-ai-apps.
+2. Azure Subscription Quota & Provider Registrations
+Resource Group: Existing resource group homelab-ai-apps
+App Service VM Quota Increase:
+Required: At least 1 B-Series / General Purpose VM core quota in region West US (or target region) for the Linux App Service Plan (B1 SKU).
+Resource Provider Registration: Ensure the following Microsoft Azure Resource Providers are registered on subscription c4b87c43-5cb1-44df-a495-b5eb8a284c4f:
+Microsoft.ServiceBus
+Microsoft.DocumentDB
+Microsoft.SignalRService (for Web PubSub)
+Microsoft.CognitiveServices
+Microsoft.Web
+Microsoft.ApiManagement
+Microsoft.Insights
+Microsoft.OperationalInsights
+3. Terraform Backend State Storage
+Resource Group: rg-terraform-backend
+Storage Account Name: sttfstatebackend37c31b1f
+Blob Container: tfstate
+State Key: azure-ai-application/terraform.tfstate
+Auth: Enable Azure AD / Entra ID authentication for state file access.
+4. Target Infrastructure to be Provisioned (via Pipeline)
+The Terraform pipeline will deploy the following core components into homelab-ai-apps:
+
+Azure Linux Web App (B1 tier) running Python 3.11 with System-Assigned Managed Identity.
+Azure Service Bus Namespace & Queue (chat-queue) for asynchronous message handling.
+Azure Cosmos DB (GlobalDocumentDB / SQL API) for session state storage.
+Azure Web PubSub (Free_F1 or Standard) for real-time WebSocket communication.
+Azure Cognitive Services / AI Foundry account (S0 tier) for AI model endpoints.
+Azure API Management (APIM) (Consumption_0 tier) for API gateway management and Entra ID JWT validation.
+Log Analytics Workspace & Application Insights for centralized logging, prompt tracing, and telemetry analytics.
